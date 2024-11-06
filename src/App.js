@@ -30,18 +30,23 @@ function Button({ children, onClick }) {
 }
 
 export default function App() {
+  const [friends, setFriends] = useState(initialFriends);
   const [showAddFriend, setShowAddFriend] = useState(false);
 
-  function handleAddFriend() {
+  function handleShowAddFriend() {
     setShowAddFriend((show) => !show);
+  }
+
+  function handleAddFriend(friend) {
+    setFriends((friends) => [...friends, friend]);
   }
 
   return (
     <div className="app">
       <div className="sidebar">
-        <FriendsList />
-        {showAddFriend && <Form />}
-        <Button onClick={handleAddFriend}>
+        <FriendsList friends={friends} />
+        {showAddFriend && <Form handleAddFriend={handleAddFriend} />}
+        <Button onClick={handleShowAddFriend}>
           {showAddFriend ? "Close" : "Add Friend"}
         </Button>
       </div>
@@ -50,8 +55,8 @@ export default function App() {
   );
 }
 
-function FriendsList() {
-  const friends = initialFriends;
+function FriendsList({ friends }) {
+  // const friends = initialFriends;
 
   return (
     <ul>
@@ -83,12 +88,14 @@ function Friend({ friend }) {
   );
 }
 
-function Form() {
+function Form({ handleAddFriend }) {
   const [name, setName] = useState("");
   const [image, setImage] = useState("https://i.pravatar.cc/48?u=499476");
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    if (!name || !image) return;
 
     const id = crypto.randomUUID();
     const newFriend = {
@@ -97,7 +104,10 @@ function Form() {
       balance: 0,
     };
 
-    console.log(newFriend);
+    handleAddFriend(newFriend);
+
+    setName("");
+    setImage('https://i.pravatar.cc/48?u=499476"');
   }
 
   return (
@@ -120,14 +130,6 @@ function Form() {
     </form>
   );
 }
-
-/// 1 - add onSubmit to the form
-/// 2 - add the function name
-/// 3 - make the function
-/// 4 - preventDefault (stops page reload)
-/// 5 - create a const object to store the submit in
-/// 6 - this gets the name and image from the state, and adds whatever else we add
-/// 7 - can also use template literals within the function to fill in other values
 
 function BillForm() {
   return (
