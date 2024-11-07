@@ -54,6 +54,16 @@ export default function App() {
 
   function handleSplitBill(value) {
     console.log(value);
+
+    setFriends((friends) =>
+      friends.map((friend) =>
+        friend.id === selectedFriend.id
+          ? { ...friend, balance: friend.balance + value }
+          : friend
+      )
+    );
+
+    setSelectedFriend("");
   }
 
   return (
@@ -190,6 +200,7 @@ function BillForm({ selectedFriend, onSplitBill }) {
         value={bill}
         onChange={(e) => setBill(Number(e.target.value))}
       ></input>
+
       <label>🧍Your expense</label>
       <input
         type="text"
@@ -203,10 +214,11 @@ function BillForm({ selectedFriend, onSplitBill }) {
 
       <label>👭{selectedFriend.name}'s expense</label>
       <input type="text" disabled value={paidByFriend}></input>
+
       <label>💰Who's paying the bill?</label>
       <select
         value={whoIsPaying}
-        onChange={(e) => setWhoIsPaying(Number(e.target.value))}
+        onChange={(e) => setWhoIsPaying(e.target.value)}
       >
         <option value="user">You</option>
         <option value="friend">{selectedFriend.name}</option>
