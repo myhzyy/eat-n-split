@@ -22,8 +22,10 @@ const initialFriends = [
 ];
 
 export default function App() {
-  const [formOpen, setFormOpen] = useState(false);
   const [friends, setFriends] = useState(initialFriends);
+  const [formOpen, setFormOpen] = useState(false);
+
+  const [selectedFriend, setSelectedFriend] = useState(null);
 
   ///// STATES ^^
 
@@ -37,52 +39,67 @@ export default function App() {
     setFriends((friends) => [...friends, friend]);
   }
 
+  function handleSelection(friend) {
+    setSelectedFriend(friend);
+    console.log(friend);
+  }
+
   ///////////////////////
 
   return (
     <div className="app">
       <div className="sidebar">
-        <FriendsList friends={friends} />
+        <FriendsList friends={friends} onSelection={handleSelection} />
         {formOpen && <InputForm handleUpdateForm={handleUpdateForm} />}
         <Button handleForm={handleForm}>{formOpen ? "Close" : "Open"}</Button>
       </div>
 
-      <BillForm />
+      {selectedFriend && <BillForm />}
     </div>
   );
 }
 
-function FriendsList({ friends }) {
+function FriendsList({ friends, onSelection }) {
   return (
     <ul>
       {friends.map((friend) => (
-        <Friends friends={friend} key={friend.name} />
+        <Friends friend={friend} key={friend.name} onSelection={onSelection} />
       ))}
     </ul>
   );
 }
 
-function Friends({ friends }) {
+function Friends({ friend, onSelection }) {
   return (
     <li>
-      <img src={friends.image} alt={friends.name} />
-      <h3>{friends.name}</h3>
+      <img src={friend.image} alt={friend.name} />
+      <h3>{friend.name}</h3>
 
-      {friends.balance < 0 && (
+      {friend.balance < 0 && (
         <p className="red">
-          You owe {friends.name} £{friends.balance}
+          You owe {friend.name} £{friend.balance}
         </p>
       )}
-      {friends.balance > 0 && (
+      {friend.balance > 0 && (
         <p className="green">
-          {friends.name} owes you £{friends.balance}
+          {friend.name} owes you £{friend.balance}
         </p>
       )}
 
-      {friends.balance === 0 && <p>You and {friends.name} are even</p>}
+      {friend.balance === 0 && <p>You and {friend.name} are even</p>}
+
+      <button className="button" onClick={() => onSelection(friend)}>
+        Closesss
+      </button>
     </li>
   );
 }
+
+/// passing in friend to the onSelection
+/// this is an oject
+/// each one of these list elements is made from the friend object
+/// so when we click on the button
+/// we are getting that individual button object passed in
 
 function InputForm({ handleUpdateForm }) {
   const [name, setName] = useState("");
@@ -143,26 +160,28 @@ function BillForm() {
   return (
     <form className="form-split-bill">
       <h2>Split a bill with x</h2>
-
       <label>Bill Value</label>
       <input
         type="text"
         value={billValue}
-        onChange={(e) => setBillValue(e.target.value)}
+        onChange={(e) => setBillValue(Number(e.target.value))}
       />
-
       <label>Your expense</label>
       <input
         type="text"
         value={expense}
-        onChange={(e) => setExpense(e.target.value)}
+        onChange={(e) =>
+          setExpense(
+            Number(e.target.value) > billValue
+              ? expense
+              : Number(e.target.value)
+          )
+        }
       />
 
       <label>Sarah's expense</label>
       <input type="text" disabled value={paidByFriend} />
-
       <label>Who is paying the bill</label>
-
       <select
         value={whoIsPaying}
         onChange={(e) => setWhoIsPaying(e.target.value)}
