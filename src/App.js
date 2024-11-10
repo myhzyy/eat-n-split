@@ -89,17 +89,11 @@ function Friends({ friend, onSelection }) {
       {friend.balance === 0 && <p>You and {friend.name} are even</p>}
 
       <button className="button" onClick={() => onSelection(friend)}>
-        Closesss
+        Close
       </button>
     </li>
   );
 }
-
-/// passing in friend to the onSelection
-/// this is an oject
-/// each one of these list elements is made from the friend object
-/// so when we click on the button
-/// we are getting that individual button object passed in
 
 function InputForm({ handleUpdateForm }) {
   const [name, setName] = useState("");
@@ -192,3 +186,7 @@ function BillForm() {
     </form>
   );
 }
+
+/// TO DO
+
+/// HIGHLIGHT FRIEND AND ADD CLASS WHEN CLICKED
